@@ -1,5 +1,5 @@
 import { AnalyticsEvent } from '@alephium/shared'
-import { memo, useEffect, useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -11,47 +11,15 @@ import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' | 'download-failed'
-
 const AutoUpdateToastBox = memo(() => {
   const { t } = useTranslation()
-  const { newAutoUpdateVersion, newManualUpdateVersion } = useLatestGitHubRelease()
+  const { newAutoUpdateVersion, newManualUpdateVersion, autoUpdateStatus, downloadPercent, downloadError } =
+    useLatestGitHubRelease()
   const { sendAnalytics } = useAnalytics()
 
   const [isUpdateSnackbarVisible, setIsUpdateSnackbarVisible] = useState(true)
-  const [status, setStatus] = useState<UpdateStatus>('download-available')
-  const [percent, setPercent] = useState('0')
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    if (!newAutoUpdateVersion) return
-
-    let timer: ReturnType<typeof setTimeout>
-
-    setStatus('downloading')
-
-    const removeUpdateDownloadProgressListener = window.electron?.updater.onUpdateDownloadProgress((info) =>
-      setPercent(info.percent.toFixed(2))
-    )
-    const removeUpdateDownloadedListener = window.electron?.updater.onUpdateDownloaded(() => {
-      // Delay success message to give time for download validation errors to arise if any
-      timer = setTimeout(() => setStatus('download-finished'), 1000)
-    })
-    const removeonErrorListener = window.electron?.updater.onError((error) => {
-      setStatus('download-failed')
-      setError(error.toString())
-      sendAnalytics({ type: 'error', error, message: 'Auto-update download failed' })
-    })
-
-    window.electron?.updater.startUpdateDownload()
-
-    return () => {
-      removeUpdateDownloadProgressListener && removeUpdateDownloadProgressListener()
-      removeUpdateDownloadedListener && removeUpdateDownloadedListener()
-      removeonErrorListener && removeonErrorListener()
-      if (timer) clearTimeout(timer)
-    }
-  }, [newAutoUpdateVersion, sendAnalytics])
+  const status = newAutoUpdateVersion ? autoUpdateStatus : 'download-available'
+  const error = newAutoUpdateVersion ? downloadError : ''
 
   const newVersion = newAutoUpdateVersion || newManualUpdateVersion
 
@@ -112,7 +80,7 @@ const AutoUpdateToastBox = memo(() => {
     >
       <Texts>
         <div>{error ? error : downloadMessage}</div>
-        {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
+        {status === 'downloading' && <ProgressBar value={downloadPercent / 100} />}
       </Texts>
     </ToastBox>
   )

@@ -26,7 +26,6 @@ contextBridge.exposeInMainWorld('electron', {
   },
   updater: {
     checkForUpdates: () => ipcRenderer.invoke('updater:checkForUpdates'),
-    startUpdateDownload: () => ipcRenderer.invoke('updater:startUpdateDownload'),
     onUpdateDownloadProgress: (callback: (info: ProgressInfo) => void) => {
       const callbackWithEventArg = (_: IpcRendererEvent, arg2: ProgressInfo) => callback(arg2)
       ipcRenderer.on('updater:download-progress', callbackWithEventArg)

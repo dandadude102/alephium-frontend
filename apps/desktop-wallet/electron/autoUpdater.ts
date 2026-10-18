@@ -4,7 +4,7 @@ import { autoUpdater } from 'electron-updater'
 import { IS_RC, isIpcSenderValid } from './utils'
 
 export const configureAutoUpdater = () => {
-  autoUpdater.autoDownload = false
+  autoUpdater.autoDownload = true
   autoUpdater.allowPrerelease = IS_RC
 }
 
@@ -23,16 +23,14 @@ export const handleAutoUpdaterUserActions = () => {
     try {
       const result = await autoUpdater.checkForUpdates()
 
-      return result?.updateInfo?.version
+      // Download errors are already forwarded by the updater's error listener.
+      // Consume the separate promise without delaying the version response.
+      result?.downloadPromise?.catch(() => undefined)
+
+      return result ? { version: result.updateInfo.version, isUpdateAvailable: result.isUpdateAvailable } : undefined
     } catch (e) {
       console.error(e)
     }
-  })
-
-  ipcMain.handle('updater:startUpdateDownload', ({ senderFrame }) => {
-    if (!isIpcSenderValid(senderFrame)) return null
-
-    autoUpdater.downloadUpdate()
   })
 
   ipcMain.handle('updater:quitAndInstallUpdate', ({ senderFrame }) => {

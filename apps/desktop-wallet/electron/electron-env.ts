@@ -14,8 +14,7 @@ declare global {
         onShouldUseDarkColors: (callback: (useDark: boolean) => void) => () => void
       }
       updater: {
-        checkForUpdates: () => Promise<string>
-        startUpdateDownload: () => void
+        checkForUpdates: () => Promise<{ version: string; isUpdateAvailable: boolean } | null | undefined>
         onUpdateDownloadProgress: (callback: (info: ProgressInfo) => void) => () => void
         onUpdateDownloaded: (callback: (updateDownloadedEvent: UpdateDownloadedEvent) => void) => () => void
         quitAndInstallUpdate: () => void
