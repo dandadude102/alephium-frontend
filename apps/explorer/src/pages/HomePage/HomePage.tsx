@@ -1,5 +1,4 @@
 import { SHORT_DATE_TIME_OPTIONS } from '@alephium/shared'
-import { addApostrophes } from '@alephium/shared/numbers'
 import { explorer } from '@alephium/web3'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
@@ -26,6 +25,7 @@ import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
+import { addCommas } from '@/utils/numbers'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import useBlockListData, { BLOCKS_PER_PAGE, BLOCKS_REFRESH_INTERVAL } from './useBlockListData'
@@ -122,7 +122,7 @@ const HomePage = () => {
               layoutId={`expandableCard-${'hashrateVector' as VectorStatisticsKey}`}
             >
               <StatisticTextual
-                primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
+                primary={hashrateInteger ? addCommas(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
                 secondary={`${hashrateSuffix}H/s`}
               />
             </CardWithChart>

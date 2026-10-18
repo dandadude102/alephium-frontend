@@ -1,12 +1,8 @@
-import {
-  convertToPositive,
-  formatAmountForDisplay,
-  formatFiatAmountForDisplay,
-  MAGNITUDE_SYMBOL
-} from '@alephium/shared/numbers'
+import { convertToPositive, formatAmountForDisplay, MAGNITUDE_SYMBOL } from '@alephium/shared/numbers'
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
+import { formatFiatAmountForDisplay } from '@/utils/numbers'
 
 import AssetLogo from './AssetLogo'
 

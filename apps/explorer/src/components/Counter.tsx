@@ -1,6 +1,7 @@
-import { addApostrophes } from '@alephium/shared/numbers'
 import { animate } from 'framer-motion'
 import { useEffect, useRef } from 'react'
+
+import { addCommas } from '@/utils/numbers'
 
 interface CounterProps {
   from?: number
@@ -18,7 +19,7 @@ const Counter = ({ from, to }: CounterProps) => {
       duration: 1,
       onUpdate(value) {
         if (node) {
-          node.textContent = addApostrophes(value.toFixed(0))
+          node.textContent = addCommas(value.toFixed(0))
           previousTargetValue.current = to
         }
       }
