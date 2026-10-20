@@ -92,6 +92,10 @@ function createWindow() {
   mainWindow.on('closed', () => {
     cleanupThemeListeners()
     mainWindow = null
+
+    // Auxiliary windows (including About on Windows) must not keep the wallet running.
+    // Wait for closed so a canceled close or beforeunload can still keep the wallet open.
+    if (!isMac) app.quit()
   })
 
   mainWindow.on('focus', () => {
